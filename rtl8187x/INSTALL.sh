@@ -1,5 +1,5 @@
 ############################################################################
-# nuttx/rtl8187x/INSTALL.sh
+# drivers/rtl8187x/INSTALL.sh
 # Install the GPLv2 RTL8187x driver into the NuttX source tree
 #
 #   Copyright (C) 2008 Gregory Nutt. All rights reserved.
@@ -88,7 +88,7 @@ if [ -z "${nuttxdir}" ]; then
 fi
 
 if [ -z "${topdir}" ]; then
-  echo "Path to the top-level misc/drivers directory not provided"
+  echo "Path to the top-level drivers directory not provided"
   echo "$usage"
   exit 3
 fi
@@ -99,7 +99,7 @@ if [ ! -d ${nuttxdir} ]; then
 fi
 
 if [ ! -d ${topdir} ]; then
-  echo "misc/drivers directory ${topdir} does not exist"
+  echo "Drivers directory ${topdir} does not exist"
   exit 5
 fi
 

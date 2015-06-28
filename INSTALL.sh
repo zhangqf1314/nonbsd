@@ -1,5 +1,5 @@
 ############################################################################
-# misc/divers/INSTALL.sh
+# drivers/INSTALL.sh
 # Install ALL optional drivers into the NuttX source tree
 #
 #   Copyright (C) 2011 Gregory Nutt. All rights reserved.
