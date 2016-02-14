@@ -1,7 +1,7 @@
 /****************************************************************************
  * drivers/usbhost/rtl8187.c
  *
- *   Copyright (C) 2011, 2012 Gregory Nutt. All rights reserved.
+ *   Copyright (C) 2011, 2012, 2016 Gregory Nutt. All rights reserved.
  *   Authors: Rafael Noronha <rafael@pdsolucoes.com.br>
  *            Gregory Nutt <gnutt@nuttx.org>
  *
@@ -63,13 +63,13 @@
 
 #include <arpa/inet.h>
 
+#include <nuttx/irq.h>
 #include <nuttx/wdog.h>
 #include <nuttx/kmalloc.h>
 #include <nuttx/fs/fs.h>
 #include <nuttx/clock.h>
 #include <nuttx/arch.h>
 #include <nuttx/wqueue.h>
-#include <nuttx/irq.h>
 
 #include <nuttx/usb/usb.h>
 #include <nuttx/usb/usbhost.h>
@@ -1455,7 +1455,7 @@ static int rtl8187x_disconnected(struct usbhost_class_s *class)
    * longer available.
    */
 
-  flags              = irqsave();
+  flags              = enter_critical_section();
   priv->disconnected = true;
 
   /* Now check the number of references on the class instance.  The USB host
@@ -1476,7 +1476,7 @@ static int rtl8187x_disconnected(struct usbhost_class_s *class)
       (void)work_queue(HPWORK, &priv->wkdisconn, rtl8187x_destroy, priv, 0);
     }
 
-  irqrestore(flags);
+  leave_critical_section(flags);
   return OK;
 }
 
@@ -2524,7 +2524,7 @@ static int rtl8187x_ifdown(struct net_driver_s *dev)
 
   /* Cancel the TX and RX poll timer. */
 
-  flags = irqsave();
+  flags = enter_critical_section();
   wd_cancel(priv->wdtxpoll);
   wd_cancel(priv->wdrxpoll);
 
@@ -2538,7 +2538,7 @@ static int rtl8187x_ifdown(struct net_driver_s *dev)
   /* Mark the device "down" */
 
   priv->bifup = false;
-  irqrestore(flags);
+  leave_critical_section(flags);
   return OK;
 }
 
@@ -4220,14 +4220,14 @@ static int rtl8187x_netuninitialize(FAR struct rtl8187x_state_s *priv)
 
   /* Cancel the TX and RX poll timers */
 
-  flags = irqsave();
+  flags = enter_critical_section();
   wd_cancel(priv->wdtxpoll);
   wd_cancel(priv->wdrxpoll);
 
   /* Mark the device "down" */
 
   priv->bifup = false;
-  irqrestore(flags);
+  leave_critical_section(flags);
 
   /* Unregister the device */
 
