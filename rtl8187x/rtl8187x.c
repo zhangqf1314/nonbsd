@@ -2066,7 +2066,7 @@ static void rtl8187x_txpolltimer(int argc, uint32_t arg, ...)
 
       if (priv->wktxpoll.worker != NULL)
         {
-          ulldbg("ERROR: TX work overrun!\n");
+          ullerr("ERROR: TX work overrun!\n");
           delay = RTL8187X_RETRYDELAY;
         }
       else
@@ -2440,7 +2440,7 @@ static void rtl8187x_rxpolltimer(int argc, uint32_t arg, ...)
 
       if (priv->wkrxpoll.worker != NULL)
         {
-          ulldbg("ERROR: RX work overrun!\n");
+          ullerr("ERROR: RX work overrun!\n");
         }
       else
         {
