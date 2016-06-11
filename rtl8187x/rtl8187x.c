@@ -637,7 +637,7 @@ static inline FAR struct rtl8187x_state_s *rtl8187x_allocclass(void)
 
   DEBUGASSERT(!up_interrupt_context());
   priv = (FAR struct rtl8187x_state_s *)kmm_malloc(sizeof(struct rtl8187x_state_s));
-  uvdbg("Allocated: %p\n", priv);;
+  uinfo("Allocated: %p\n", priv);;
   return priv;
 }
 
@@ -663,7 +663,7 @@ static inline void rtl8187x_freeclass(FAR struct rtl8187x_state_s *class)
    * from an interrupt handler.
    */
 
-  uvdbg("Freeing: %p\n", class);
+  uinfo("Freeing: %p\n", class);
   kfree(class);
 }
 
@@ -688,7 +688,7 @@ static void rtl8187x_destroy(FAR void *arg)
   FAR struct rtl8187x_state_s *priv = (FAR struct rtl8187x_state_s *)arg;
 
   DEBUGASSERT(priv != NULL);
-  uvdbg("crefs: %d\n", priv->crefs);
+  uinfo("crefs: %d\n", priv->crefs);
 
   /* Unregister WLAN network interface */
 
@@ -764,7 +764,7 @@ static inline int rtl8187x_cfgdesc(FAR struct rtl8187x_state_s *priv,
   uint8_t found = 0;
   int ret;
 
-  uvdbg("desclen:%d funcaddr:%d\n", desclen, funcaddr);
+  uinfo("desclen:%d funcaddr:%d\n", desclen, funcaddr);
   DEBUGASSERT(priv != NULL &&
               configdesc != NULL &&
               desclen >= sizeof(struct usb_cfgdesc_s));
@@ -805,7 +805,7 @@ static inline int rtl8187x_cfgdesc(FAR struct rtl8187x_state_s *priv,
           {
             FAR struct usb_ifdesc_s *ifdesc = (FAR struct usb_ifdesc_s *)configdesc;
 
-            uvdbg("Interface descriptor\n");
+            uinfo("Interface descriptor\n");
             DEBUGASSERT(remaining >= USB_SIZEOF_IFDESC);
 
             /* Save the interface number and mark ONLY the interface found */
@@ -823,7 +823,7 @@ static inline int rtl8187x_cfgdesc(FAR struct rtl8187x_state_s *priv,
           {
             FAR struct usb_epdesc_s *epdesc = (FAR struct usb_epdesc_s *)configdesc;
 
-            uvdbg("Endpoint descriptor\n");
+            uinfo("Endpoint descriptor\n");
             DEBUGASSERT(remaining >= USB_SIZEOF_EPDESC);
 
             /* Check for a bulk endpoint. */
@@ -860,7 +860,7 @@ static inline int rtl8187x_cfgdesc(FAR struct rtl8187x_state_s *priv,
                     boutdesc.xfrtype      = USB_EP_ATTR_XFER_BULK;
                     boutdesc.interval     = epdesc->interval;
                     boutdesc.mxpacketsize = rtl8187x_getle16(epdesc->mxpacketsize);
-                    uvdbg("Bulk OUT EP addr:%d mxpacketsize:%d\n",
+                    uinfo("Bulk OUT EP addr:%d mxpacketsize:%d\n",
                           boutdesc.addr, boutdesc.mxpacketsize);
                   }
                 else
@@ -887,7 +887,7 @@ static inline int rtl8187x_cfgdesc(FAR struct rtl8187x_state_s *priv,
                     bindesc.xfrtype      = USB_EP_ATTR_XFER_BULK;
                     bindesc.interval     = epdesc->interval;
                     bindesc.mxpacketsize = rtl8187x_getle16(epdesc->mxpacketsize);
-                    uvdbg("Bulk IN EP addr:%d mxpacketsize:%d\n",
+                    uinfo("Bulk IN EP addr:%d mxpacketsize:%d\n",
                           bindesc.addr, bindesc.mxpacketsize);
                   }
               }
@@ -943,7 +943,7 @@ static inline int rtl8187x_cfgdesc(FAR struct rtl8187x_state_s *priv,
       return ret;
     }
 
-  uvdbg("Endpoints allocated\n");
+  uinfo("Endpoints allocated\n");
   return OK;
 }
 
@@ -981,7 +981,7 @@ static inline int rtl8187x_devinit(FAR struct rtl8187x_state_s *priv)
 
   /* Configure the device and register the network driver */
 
-  uvdbg("Register ethernet device\n");
+  uinfo("Register ethernet device\n");
   ret = rtl8187x_netinitialize(priv);
 
   /* Check if we successfully initialized. We now have to be concerned
@@ -1175,14 +1175,14 @@ static inline int rtl8187x_allocbuffers(FAR struct rtl8187x_state_s *priv)
   ret = DRVR_ALLOC(priv->hcd, (FAR uint8_t **)&priv->ctrlreq, &buflen);
   if (ret != OK)
     {
-      uvdbg("DRVR_ALLOC(ctrlreq) failed: %d\n", ret);
+      uinfo("DRVR_ALLOC(ctrlreq) failed: %d\n", ret);
       return ret;
     }
 
   ret = DRVR_ALLOC(priv->hcd, &priv->tbuffer, &priv->tbuflen);
   if (ret != OK)
     {
-      uvdbg("DRVR_ALLOC(tbuffer) failed: %d\n", ret);
+      uinfo("DRVR_ALLOC(tbuffer) failed: %d\n", ret);
       return ret;
     }
 
@@ -1194,7 +1194,7 @@ static inline int rtl8187x_allocbuffers(FAR struct rtl8187x_state_s *priv)
   ret = DRVR_IOALLOC(priv->hcd, &priv->txbuffer, buflen);
   if (ret != OK)
     {
-      uvdbg("DRVR_ALLOC(txbuffer) failed: %d\n", ret);
+      uinfo("DRVR_ALLOC(txbuffer) failed: %d\n", ret);
     }
 
   /* Allocate one RX I/O buffer big enough to hold one full packet plus
@@ -1205,7 +1205,7 @@ static inline int rtl8187x_allocbuffers(FAR struct rtl8187x_state_s *priv)
   ret = DRVR_IOALLOC(priv->hcd, &priv->rxbuffer, buflen);
   if (ret != OK)
     {
-      uvdbg("DRVR_ALLOC(rxbuffer) failed: %d\n", ret);
+      uinfo("DRVR_ALLOC(rxbuffer) failed: %d\n", ret);
     }
 
   return ret;
@@ -1289,7 +1289,7 @@ static FAR struct usbhost_class_s *rtl8187x_create(FAR struct usbhost_driver_s *
 
   /* Allocate a USB host class instance */
 
-  uvdbg("vid:%04x pid:%04x\n", id->vid, id->pid);
+  uinfo("vid:%04x pid:%04x\n", id->vid, id->pid);
   priv = rtl8187x_allocclass();
   if (priv)
     {
@@ -1464,14 +1464,14 @@ static int rtl8187x_disconnected(struct usbhost_class_s *class)
    * we will have to wait until the holders of the references free them.
    */
 
-  ullvdbg("crefs: %d\n", priv->crefs);
+  ullinfo("crefs: %d\n", priv->crefs);
   if (--priv->crefs <= 0)
     {
       /* Destroy the class instance.  Defer the destruction to the worker thread.
        * (in case we were callded from an interrupt handler).
        */
 
-      ullvdbg("Queuing destruction: worker %p->%p\n", priv->wkdisconn.worker, rtl8187x_destroy);
+      ullinfo("Queuing destruction: worker %p->%p\n", priv->wkdisconn.worker, rtl8187x_destroy);
       DEBUGASSERT(priv->wkdisconn.worker == NULL);
       (void)work_queue(HPWORK, &priv->wkdisconn, rtl8187x_destroy, priv, 0);
     }
@@ -2244,7 +2244,7 @@ static inline void rtl8187x_rxdispatch(FAR struct rtl8187x_state_s *priv,
 #ifdef CONFIG_NET_IPv4
   if (ethhdr->type == HTONS(ETHTYPE_IP))
     {
-      nllvdbg("IPv4 frame\n");
+      nllinfo("IPv4 frame\n");
       RTL8187X_STATS(priv, rxipv4packets);
 
       /* Handle ARP on input then give the IPv4 packet to the network
@@ -2279,7 +2279,7 @@ static inline void rtl8187x_rxdispatch(FAR struct rtl8187x_state_s *priv,
 #ifdef CONFIG_NET_IPv6
   if (ethhdr->type == HTONS(ETHTYPE_IP6))
     {
-      nllvdbg("IPv6 frame\n");
+      nllinfo("IPv6 frame\n");
       RTL8187X_STATS(priv, rxipv6packets);
 
       /* Give the IPv6 packet to the network layer */
@@ -2957,7 +2957,7 @@ static void rtl8225_rfinit(FAR struct rtl8187x_state_s *priv)
 {
   unsigned int i;
 
-  uvdbg("rfinit");
+  uinfo("rfinit");
   rtl8187x_write(priv, 0x0, 0x067);
   usleep(1000);
   rtl8187x_write(priv, 0x1, 0xFE0);
@@ -4260,7 +4260,7 @@ int usbhost_wlaninit(void)
 {
   /* Advertise our availability to support RTL8187x devices */
 
-  uvdbg("Register RTL8187x driver\n");
+  uinfo("Register RTL8187x driver\n");
   return usbhost_registerclass(&g_wlan);
 }
 
