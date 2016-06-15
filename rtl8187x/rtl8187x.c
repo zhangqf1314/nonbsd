@@ -1406,7 +1406,7 @@ static int rtl8187x_connect(FAR struct usbhost_class_s *class,
   ret = rtl8187x_cfgdesc(priv, configdesc, desclen, funcaddr);
   if (ret != OK)
     {
-      uerr("rtl8187x_cfgdesc() failed: %d\n", ret);
+      uerr("ERROR: rtl8187x_cfgdesc() failed: %d\n", ret);
     }
   else
     {
@@ -1415,7 +1415,7 @@ static int rtl8187x_connect(FAR struct usbhost_class_s *class,
       ret = rtl8187x_devinit(priv);
       if (ret != OK)
         {
-          uerr("rtl8187x_devinit() failed: %d\n", ret);
+          uerr("ERROR: rtl8187x_devinit() failed: %d\n", ret);
         }
     }
 
@@ -2130,7 +2130,7 @@ static inline int rtl8187x_receive(FAR struct rtl8187x_state_s *priv,
   flags  = rtl8187x_le2host32(rxdesc->flags);
   if (flags & RTL8187X_RXDESC_FLAG_CRC32ERR)
     {
-      uerr("Bad CRC\n");
+      uerr("ERROR: Bad CRC\n");
       RTL8187X_STATS(priv, rxcrcerr);
       RTL8187X_STATS(priv, rxdropped);
       return -EINVAL;
@@ -2475,9 +2475,9 @@ static int rtl8187x_ifup(struct net_driver_s *dev)
   FAR struct rtl8187x_state_s *priv = (FAR struct rtl8187x_state_s *)dev->d_private;
   int ret;
 
-  nerr("Bringing up: %d.%d.%d.%d\n",
-       dev->d_ipaddr & 0xff, (dev->d_ipaddr >> 8) & 0xff,
-       (dev->d_ipaddr >> 16) & 0xff, dev->d_ipaddr >> 24 );
+  ninfo("Bringing up: %d.%d.%d.%d\n",
+        dev->d_ipaddr & 0xff, (dev->d_ipaddr >> 8) & 0xff,
+        (dev->d_ipaddr >> 16) & 0xff, dev->d_ipaddr >> 24 );
 
   /* Initialize PHYs and the WLAN interface */
 
@@ -3004,7 +3004,7 @@ static void rtl8225_rfinit(FAR struct rtl8187x_state_s *priv)
       usleep(100000);
       if (!(rtl8187x_read(priv, 6) & (1 << 7)))
         {
-          uerr("RF Calibration Failed! %x\n", rtl8187x_read(priv, 6));
+          uerr("ERROR: RF Calibration Failed! %x\n", rtl8187x_read(priv, 6));
         }
     }
 
@@ -3246,7 +3246,7 @@ static void rtl8225z2_rfinit(FAR struct rtl8187x_state_s *priv)
       usleep(100000);
       if (!(rtl8187x_read(priv, 6) & (1 << 7)))
         {
-          uerr("RF Calibration Failed! %x\n", rtl8187x_read(priv, 6));
+          uerr("ERROR: RF Calibration Failed! %x\n", rtl8187x_read(priv, 6));
         }
     }
 
@@ -3771,7 +3771,7 @@ static int rtl8187x_reset(struct rtl8187x_state_s *priv)
 
   if (!i)
     {
-      uerr("Reset timeout!\n");
+      uerr("ERROR: Reset timeout!\n");
       return -ETIMEDOUT;
     }
 
@@ -3791,7 +3791,7 @@ static int rtl8187x_reset(struct rtl8187x_state_s *priv)
 
   if (!i)
     {
-      uerr("%s: eeprom reset timeout!\n");
+      uerr("ERROR: %s: eeprom reset timeout!\n");
       return -ETIMEDOUT;
     }
 
@@ -4069,7 +4069,7 @@ static int rtl8187x_setup(FAR struct rtl8187x_state_s *priv)
   usleep(10);
 
   rtl8187x_eeprom_multiread(priv, RTL8187X_EEPROM_MACADDR, permaddr, 3);
-  uerr("MAC address: %04x.%04x.%04x", permaddr[0], permaddr[1], permaddr[2]);
+  uinfo("MAC address: %04x.%04x.%04x", permaddr[0], permaddr[1], permaddr[2]);
 
   channel = priv->channels;
   for (i = 0; i < 3; i++)
@@ -4149,12 +4149,12 @@ static int rtl8187x_setup(FAR struct rtl8187x_state_s *priv)
 
   /* Provide information about the RTL device */
 
-  uerr("hwaddr %02x.%02x.%02x.%02x.%02x.%02x, rtl8187 V%d + %s\n",
-       priv->ethdev.d_mac.ether_addr_octet[0], priv->ethdev.d_mac.ether_addr_octet[1],
-       priv->ethdev.d_mac.ether_addr_octet[2], priv->ethdev.d_mac.ether_addr_octet[3],
-       priv->ethdev.d_mac.ether_addr_octet[4], priv->ethdev.d_mac.ether_addr_octet[5],
-       priv->asicrev,
-       priv->rfinit == rtl8225_rfinit ? "rtl8225" : "rtl8225z2");
+  uinfo("hwaddr %02x.%02x.%02x.%02x.%02x.%02x, rtl8187 V%d + %s\n",
+        priv->ethdev.d_mac.ether_addr_octet[0], priv->ethdev.d_mac.ether_addr_octet[1],
+        priv->ethdev.d_mac.ether_addr_octet[2], priv->ethdev.d_mac.ether_addr_octet[3],
+        priv->ethdev.d_mac.ether_addr_octet[4], priv->ethdev.d_mac.ether_addr_octet[5],
+        priv->asicrev,
+        priv->rfinit == rtl8225_rfinit ? "rtl8225" : "rtl8225z2");
 
   return 0;
 }
