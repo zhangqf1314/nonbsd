@@ -1464,14 +1464,14 @@ static int rtl8187x_disconnected(struct usbhost_class_s *class)
    * we will have to wait until the holders of the references free them.
    */
 
-  ullinfo("crefs: %d\n", priv->crefs);
+  uinfo("crefs: %d\n", priv->crefs);
   if (--priv->crefs <= 0)
     {
       /* Destroy the class instance.  Defer the destruction to the worker thread.
        * (in case we were callded from an interrupt handler).
        */
 
-      ullinfo("Queuing destruction: worker %p->%p\n", priv->wkdisconn.worker, rtl8187x_destroy);
+      uinfo("Queuing destruction: worker %p->%p\n", priv->wkdisconn.worker, rtl8187x_destroy);
       DEBUGASSERT(priv->wkdisconn.worker == NULL);
       (void)work_queue(HPWORK, &priv->wkdisconn, rtl8187x_destroy, priv, 0);
     }
@@ -2066,7 +2066,7 @@ static void rtl8187x_txpolltimer(int argc, uint32_t arg, ...)
 
       if (priv->wktxpoll.worker != NULL)
         {
-          ullerr("ERROR: TX work overrun!\n");
+          uerr("ERROR: TX work overrun!\n");
           delay = RTL8187X_RETRYDELAY;
         }
       else
@@ -2244,7 +2244,7 @@ static inline void rtl8187x_rxdispatch(FAR struct rtl8187x_state_s *priv,
 #ifdef CONFIG_NET_IPv4
   if (ethhdr->type == HTONS(ETHTYPE_IP))
     {
-      nllinfo("IPv4 frame\n");
+      ninfo("IPv4 frame\n");
       RTL8187X_STATS(priv, rxipv4packets);
 
       /* Handle ARP on input then give the IPv4 packet to the network
@@ -2279,7 +2279,7 @@ static inline void rtl8187x_rxdispatch(FAR struct rtl8187x_state_s *priv,
 #ifdef CONFIG_NET_IPv6
   if (ethhdr->type == HTONS(ETHTYPE_IP6))
     {
-      nllinfo("IPv6 frame\n");
+      ninfo("IPv6 frame\n");
       RTL8187X_STATS(priv, rxipv6packets);
 
       /* Give the IPv6 packet to the network layer */
@@ -2440,7 +2440,7 @@ static void rtl8187x_rxpolltimer(int argc, uint32_t arg, ...)
 
       if (priv->wkrxpoll.worker != NULL)
         {
-          ullerr("ERROR: RX work overrun!\n");
+          uerr("ERROR: RX work overrun!\n");
         }
       else
         {
